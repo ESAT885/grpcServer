@@ -10,13 +10,14 @@ namespace grpcServer.Services
         {
             _logger = logger;
         }
+      
         public override async Task<AlertResponse> SendAlert(IAsyncStreamReader<AlertRequest> requestStream, ServerCallContext context)
         {
             while (await requestStream.MoveNext(context.CancellationToken))
             {
                 var alertRequest = requestStream.Current;
        
-                Console.WriteLine($"Received Alert: Type={alertRequest.Alert}");
+                Console.WriteLine($"Received Alert: {alertRequest.Alert}");
 
             }
             return new AlertResponse

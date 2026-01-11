@@ -1,4 +1,5 @@
-﻿using Grpc.Net.Client;
+﻿using Grpc.Core;
+using Grpc.Net.Client;
 using grpcAlertClient;
 using grpcClient;
 using grpcMessageClient;
@@ -14,21 +15,25 @@ HelloReply result = await greetingClient.SayHelloAsync(
 
 Console.WriteLine(result.Message);
 
-//Server Streaming
+// =====================
+// SERVER STREAMING (arka planda)
+// =====================
 var messageClient = new Message.MessageClient(channel);
-var messageResult = messageClient.SendMessage(
-    new MessageRequest
+
+_ = Task.Run(async () =>
+{
+    var stream = messageClient.SendMessage(new MessageRequest
     {
         Message = "Merhaba",
         Name = "Esat"
     });
-CancellationTokenSource cts = new CancellationTokenSource();
-while (await messageResult.ResponseStream.MoveNext(cts.Token))
-{
-    var currentMessage = messageResult.ResponseStream.Current;
-    Console.WriteLine(currentMessage.Message);
-}
-//Client Streaming
+
+    await foreach (var msg in stream.ResponseStream.ReadAllAsync())
+    {
+        Console.WriteLine("ServerStream: " + msg.Message);
+    }
+});
+
 var alertresponseClient = new Alert.AlertClient(channel);
 var requestStream = alertresponseClient.SendAlert();
 for (int i = 0; i < 10; i++)
@@ -43,3 +48,4 @@ for (int i = 0; i < 10; i++)
 await requestStream.RequestStream.CompleteAsync();
 var response = await requestStream.ResponseAsync;
 Console.WriteLine("Server says: " + response.Message);
+Console.ReadLine();

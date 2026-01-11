@@ -1,5 +1,5 @@
 using Grpc.Core;
-using grpcServer;
+
 
 namespace grpcServer.Services
 {
@@ -13,6 +13,7 @@ namespace grpcServer.Services
 
         public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
         {
+            Console.WriteLine( request.Name);
             return Task.FromResult(new HelloReply
             {
                 Message = "Hello " + request.Name

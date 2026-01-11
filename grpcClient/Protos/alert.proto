@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "grpcAlertClient";
+
+package alert;
+
+
+service Alert {
+
+  rpc SendAlert (stream AlertRequest) returns ( AlertResponse);
+}
+
+
+message AlertRequest {
+  string alert = 1;
+}
+
+
+message AlertResponse {
+  string message = 1;
+}

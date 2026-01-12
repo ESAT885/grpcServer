@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "grpcErrorClient";
+
+package error;
+
+
+service Error {
+
+  rpc SendError (stream ErrorRequest) returns (stream ErrorResponse);
+}
+
+
+message ErrorRequest {
+  string error = 1;
+}
+
+
+message ErrorResponse {
+  string error = 1;
+}
